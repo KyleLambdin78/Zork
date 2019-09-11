@@ -26,16 +26,10 @@ namespace Zork
                         outputString = "This is an open field west of a white house, with a boarded front door. A rubber mat saying 'Welcome to Zork! lies by the door";
                         break;
                     case Commands.NORTH:
-                        outputString = "You moved North";
-                        break;
                     case Commands.SOUTH:
-                        outputString = "You moved South";
-                        break;
                     case Commands.EAST:
-                        outputString = "You moved East";
-                        break;
                     case Commands.WEST:
-                        outputString = "You moved West";
+                        outputString = $"You moved {command}.";
                         break;
 
                     default:
