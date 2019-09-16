@@ -5,6 +5,7 @@ namespace Zork
 
     class Program
     {
+        private static (int Row, int Column) Location = (0, 1);
         static void Main(string[] args)
         {
             Console.WriteLine("Welcome to Zork!");
@@ -36,8 +37,6 @@ namespace Zork
                         outputString = "Unkown command.";
                         break;
 
-
-
                 }
 
                 Console.WriteLine(outputString);
@@ -46,5 +45,29 @@ namespace Zork
             
         }
         private static Commands ToCommand(string commandString) => Enum.TryParse(commandString, true, out Commands result) ? result : Commands.UNKNOWN;
+        private static string[,] Rooms =
+        {
+            {"Forest", "West of House", "Behind House", "Clearing", "Canyon View" }
+        };
+
+        private static bool Move(Commands command)
+        {
+            switch (command)
+            {
+                case Commands.WEST:
+                    if(Location.Column > 0)
+                    {
+                        Location.Column--;
+                    }
+                    break;
+                case Commands.EAST:
+                    if(Location.Column > 0)
+                    {
+                        Location.Column++;
+                    }
+                    break;
+                
+            }
+        }
     }
 }
