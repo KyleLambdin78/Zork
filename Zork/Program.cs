@@ -3,7 +3,7 @@
 namespace Zork
 {
 
-    class Program
+   internal class Program
     {
         private static string CurrentRoom
         {
@@ -12,6 +12,19 @@ namespace Zork
                 return Rooms[Location.Row, Location.Column];
             }
         }
+        private static string[,] Rooms =
+     {
+            {"Rocky Trail", "South of House", "Canyon View" },
+            {"Forest", "West of House", "Behind House" },
+            {"Dense Woods", "North of House", "Clearing" }
+        };
+        private static readonly List<Commands> Directions = new List<Commands>
+        {
+            Commands.NORTH,
+            Commands.SOUTH,
+            Commands.EAST,
+            Commands.WEST
+        };
         private static (int Row, int Column) Location = (1, 1);
         static void Main(string[] args)
         {
@@ -58,51 +71,30 @@ namespace Zork
 
         }
         private static Commands ToCommand(string commandString) => Enum.TryParse(commandString, true, out Commands result) ? result : Commands.UNKNOWN;
-        private static string[,] Rooms =
-        {
-            {"Rocky Trail", "South of House", "Canyon View" },
-            {"Forest", "West of House", "Behind House" },
-            {"Dense Woods", "North of House", "Clearing" }
-        };
+     
 
         private static bool Move(Commands command)
         {
+            bool isValidMove = true;
             switch (command)
             {
-                case Commands.WEST:
-                    if (Location.Column > 0)
-                    {
-                        Location.Column--;
-                        return true;
-                    }
-
+                case Commands.WEST when Location.Column > 0:
+                    Location.Column--;
                     break;
-                case Commands.EAST:
-                    if (Location.Column < Rooms.GetLength(1) - 1)
-                    {
-                        Location.Column++;
 
-                        return true;
+                case Commands.EAST when Location.Column < Rooms.GetLength(1) - 1:
+                    Location.Column++;
+                        break;
 
-                    }
-                    break;
-                case Commands.NORTH:
-                    if (Location.Row > 0)
-                    {
+                case Commands.NORTH when Location.Row > 0:
                         Location.Row--;
-                        return true;
-                    }
-                    break;
-                case Commands.SOUTH:
-                    if (Location.Row < Rooms.GetLongLength(0) - 1)
-                    {
-                        Location.Row++;
-                        return true;
-                    }
-                    break;
+                        break;
 
+                case Commands.SOUTH when Location.Row < Rooms.GetLongLength(0) - 1:
+                    Location.Row++;
+                    break;
             }
-            return false;
+            return isValidMove;
         }
     }
 }
