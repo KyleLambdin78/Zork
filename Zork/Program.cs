@@ -12,7 +12,7 @@ namespace Zork
                 return Rooms[Location.Row, Location.Column];
             }
         }
-        private static (int Row, int Column) Location = (0, 1);
+        private static (int Row, int Column) Location = (1, 1);
         static void Main(string[] args)
         {
             Console.WriteLine("Welcome to Zork!");
@@ -60,7 +60,9 @@ namespace Zork
         private static Commands ToCommand(string commandString) => Enum.TryParse(commandString, true, out Commands result) ? result : Commands.UNKNOWN;
         private static string[,] Rooms =
         {
-            {"Forest", "West of House", "Behind House", "Clearing", "Canyon View" }
+            {"Rocky Trail", "South of House", "Canyon View" },
+            {"Forest", "West of House", "Behind House" },
+            {"Dense Woods", "North of House", "Clearing" }
         };
 
         private static bool Move(Commands command)
@@ -84,9 +86,20 @@ namespace Zork
 
                     }
                     break;
-
-
-
+                case Commands.NORTH:
+                    if (Location.Row > 0)
+                    {
+                        Location.Row--;
+                        return true;
+                    }
+                    break;
+                case Commands.SOUTH:
+                    if (Location.Row < Rooms.GetLongLength(0) - 1)
+                    {
+                        Location.Row++;
+                        return true;
+                    }
+                    break;
 
             }
             return false;
