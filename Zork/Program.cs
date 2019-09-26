@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace Zork
 {
@@ -104,7 +105,7 @@ namespace Zork
 
         private static bool IsDirection(Commands command) => Directions.Contains(command);
 
-        private static readonly Room[,] Rooms =
+        private static Room[,] Rooms =
         {
             { new Room("Rocky Trail"), new Room("South of House"), new Room("Canyon View") },
             { new Room("Forest"), new Room("West of House"), new Room("Behind House") },
@@ -135,36 +136,10 @@ namespace Zork
             RoomsFilename = 0
         }
 
-        static Program()
-        {
-            RoomMap = new Dictionary<string, Room>();
-            foreach (Room room in Rooms)
-            {
-                RoomMap[room.Name] = room;
-            }
-        }
 
-        private static void InitialzeRoomDescription(string roomsFilename)
-        {
-            const string fieldDelimiter = "##";
-            const int expectedFieldCount = 2;
 
-            string[] lines = File.ReadAllLines(roomsFilename);
-            foreach (string line in lines)
-            {
-                string[] fields = line.Split(fieldDelimiter);
-                if (fields.Length != expectedFieldCount)
-                {
-                    throw new InvalidDataException("Invalid record.");
-                }
-
-                string name = fields[(int)Fields.Name];
-                string description = fields[(int)Fields.Description];
-
-                RoomMap[name].Description = description;
-            }
-
-        }
+        private static void InitialzeRooms(string roomsFilename) =>
+        Rooms = JsonConvert.DeserializeObject<Room[,]>(File.ReadAllText(roomsFilename));
     }
 
 }
