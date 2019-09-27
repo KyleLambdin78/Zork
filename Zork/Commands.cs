@@ -4,14 +4,14 @@ using System.Text;
 
 namespace Zork
 { 
-         enum Commands
+         public enum Commands
         {
             QUIT,
             LOOK,
             NORTH,
             SOUTH,
             EAST,
-            WEST,
+            WEST, 
             UNKNOWN
         }
     
