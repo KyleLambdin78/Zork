@@ -1,18 +1,56 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace Zork
-{ 
-         public enum Commands
+{
+   public class Commands : IEquatable<Commands>
+    {
+        public string Name { get; set; }
+
+        public string Verbs { get; }
+
+        public Action<Game, CommandsContext> Action { get; }
+
+        public Commands (string name, string verb, Action<Game, CommandsContext> action):
+            this(name, new string[] { verb }, action)
         {
-            QUIT,
-            LOOK,
-            NORTH,
-            SOUTH,
-            EAST,
-            WEST, 
-            UNKNOWN
         }
+
+        public Commands(string name, IEnumerable<string> verbs, Action<Game, CommandsContext> action)
+        {
+            Name = name;
+            Verbs = verbs.ToArray();
+            Action = action;
+        }
+
+        public static bool operator ==(Commands lhs, Commands rhs)
+        {
+            if (ReferenceEquals(lhs, rhs))
+            {
+                return true;
+            }
+            if (lhs is null || rhs is null)
+            {
+                return false;
+            }
+
+            return lhs.Name == rhs.Name;
+        }
+
+        public static bool operator !=(Commands lhs, Commands rhs) => !(lhs == rhs);
+
+        public override bool Equals(object obj) => obj is Commands ? this == (Commands)obj : false;
+
+        public bool Equals(Commands other) => this == other;
+
+        public override int GetHashCode() => Name.GetHashCode();
+
+        public override string ToString() => Name;
+       
+
+
+    }
+    
     
 }

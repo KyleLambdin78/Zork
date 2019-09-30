@@ -11,6 +11,8 @@ namespace Zork
         public Player Player { get; private set; }
         [JsonIgnore]
         private bool IsRunning { get; set; }
+        [JsonIgnore]
+        public CommandsManager CommandsManager { get; }
 
         public Game(World world, Player player)
         {
@@ -18,50 +20,44 @@ namespace Zork
             Player = player;
         }
 
+        public Game()
+        {
+            Commands[] commands =
+            {
+                new Commands("LOOK", new string[] { "LOOK", "L"},
+                (game, CommandContext) => Console.WriteLine(game.Player.Location.Description)),
+
+                 new Commands("QUIT", new string[] { "QUIT", "Q"},
+                (game, CommandContext) => game.IsRunning = false),
+
+                 new Commands("NORTH", new string[] { "NORTH", "N"}, MovementCommands.North),
+                 new Commands("WEST", new string[] { "WEST", "W"}, MovementCommands.West),
+                 new Commands("SOUTH", new string[] { "SOUTH", "S"}, MovementCommands.South),
+                 new Commands("EAST", new string[] { "EAST", "E"}, MovementCommands.East),
+            };
+            CommandsManager = new CommandsManager(commands);
+        }
         public void Run()
         {
             IsRunning = true;
             Room previousRoom = null;
             while (IsRunning)
             {
-                Console.WriteLine(Player.Location);
-                if (previousRoom != Player.Location)
+               Console.WriteLine(Player.Location);
+               if(previousRoom != Player.Location)
                 {
-                    Console.WriteLine(Player.Location.Description);
+                    CommandsManager.PerformCommand(this, "LOOK");
                     previousRoom = Player.Location;
                 }
 
                 Console.Write("\n>");
-                Commands command = ToCommand(Console.ReadLine().Trim());
-
-
-                switch (command)
+                if (CommandsManager.PerformCommand(this, Console.ReadLine().Trim()))
                 {
-                    case Commands.QUIT:
-                        Console.WriteLine("Thank you for playing!");
-                        break;
-
-                    case Commands.LOOK:
-                        Console.WriteLine(Player.Location.Description);
-                        break;
-
-                    case Commands.NORTH:
-                    case Commands.SOUTH:
-                    case Commands.EAST:
-                    case Commands.WEST:
-                        Directions direction = Enum.Parse<Directions>(command.ToString(), true);
-                        if (Player.Move(direction) == false)
-                        {
-                            Console.WriteLine("This way is shut!");
-                        }
-                        else
-                            Console.WriteLine($"You moved {command}.");
-                        break;
-
-                    default:
-                        Console.WriteLine("Unkown command.");
-                        break;
-
+                    Player.Moves++;
+                }
+                else
+                {
+                    Console.WriteLine("That's not a verb I recognize.");
                 }
 
             }
