@@ -14,7 +14,8 @@ namespace Zork
         {
             var commandQuery = from command in mCommands
                                where command.Verbs.Contains(commandString, StringComparer.OrdinalIgnoreCase)
-                               select new CommandsContext(commandString, command);
+                               select new CommandContext(commandString, command);
+
             return commandQuery.FirstOrDefault();
         }
 
@@ -38,6 +39,7 @@ namespace Zork
         public void RemoveCommand(Commands command) => mCommands.Remove(command);
         public void AddCommands(IEnumerable<Commands> commands) => mCommands.UnionWith(commands);
         public void ClearCommands() => mCommands.Clear();
+
         private HashSet<Commands> mCommands;
     }
 }

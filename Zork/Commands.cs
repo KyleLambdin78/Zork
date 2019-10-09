@@ -8,16 +8,16 @@ namespace Zork
     {
         public string Name { get; set; }
 
-        public string Verbs { get; }
+        public string[] Verbs { get; }
 
-        public Action<Game, CommandsContext> Action { get; }
+        public Action<Game, CommandContext> Action { get; }
 
-        public Commands (string name, string verb, Action<Game, CommandsContext> action):
+        public Commands (string name, string verb, Action<Game, CommandContext> action):
             this(name, new string[] { verb }, action)
         {
         }
 
-        public Commands(string name, IEnumerable<string> verbs, Action<Game, CommandsContext> action)
+        public Commands(string name, IEnumerable<string> verbs, Action<Game, CommandContext> action)
         {
             Name = name;
             Verbs = verbs.ToArray();

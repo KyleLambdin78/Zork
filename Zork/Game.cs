@@ -6,13 +6,15 @@ namespace Zork
 {
     public class Game
     {
-        public World World { get; private set; }
+        public World World { get; set; }
         [JsonIgnore]
         public Player Player { get; private set; }
         [JsonIgnore]
         private bool IsRunning { get; set; }
         [JsonIgnore]
         public CommandsManager CommandsManager { get; }
+
+        
 
         public Game(World world, Player player)
         {
@@ -25,10 +27,10 @@ namespace Zork
             Commands[] commands =
             {
                 new Commands("LOOK", new string[] { "LOOK", "L"},
-                (game, CommandContext) => Console.WriteLine(game.Player.Location.Description)),
+                (game, commandContext) => Console.WriteLine(game.Player.Location.Description)),
 
                  new Commands("QUIT", new string[] { "QUIT", "Q"},
-                (game, CommandContext) => game.IsRunning = false),
+                (game, commandContext) => game.IsRunning = false),
 
                  new Commands("NORTH", new string[] { "NORTH", "N"}, MovementCommands.North),
                  new Commands("WEST", new string[] { "WEST", "W"}, MovementCommands.West),
@@ -43,7 +45,7 @@ namespace Zork
             Room previousRoom = null;
             while (IsRunning)
             {
-               Console.WriteLine(Player.Location);
+                Console.WriteLine(Player.Location);
                if(previousRoom != Player.Location)
                 {
                     CommandsManager.PerformCommand(this, "LOOK");
@@ -70,7 +72,7 @@ namespace Zork
 
             return game;
         }
-        private static Commands ToCommand(string commandString) => Enum.TryParse<Commands>(commandString, true, out Commands result) ? result : Commands.UNKNOWN;
+        
     }
 
 }
