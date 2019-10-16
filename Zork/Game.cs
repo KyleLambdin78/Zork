@@ -72,6 +72,52 @@ namespace Zork
 
             return game;
         }
+        private void LoadScripts()
+        {
+            foreach (string file in Directory.EnumerateFiles(ScriptDirectory, ScriptFileExtension))
+            {
+                try
+                {
+                    var scriptOptions = scriptOptions.Default.AddReferences(Assembly.GetExecutingAssembly());
+
+                    scriptOptions = scriptOptions.WithEmitDebugInformation(true)
+                        .WithFilePath(new FileInfo(file).FullName)
+                        .WithFileEncoding(Encoding.UTF8);
+
+
+                    string script = File.ReadAllText(file);
+                    CSharpScript.RunAsync(script, scriptOptions).Wait();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error compiling script: {file} Error: {ex.Message}");
+                }
+            }
+        }
+        private static readonly string ScriptDirectory = "Scripts";
+        private static readonly string ScriptFileExtension = "*.csx";
+        private void LoadCommands()
+        {
+            Type[] types = Assembly.GetExecutingAssembly().GetTypes();
+            foreach (Type type in types)
+            {
+                CommandClassAttribute commandClassAttribute = type.GetCustomAttributes<CommandClassAttribute>();
+                if (commandClassAttribute != null)
+                {
+                    MethodInfo[] methods = type.GetMethods();
+                    foreach (MethodInfo method in methods)
+                    {
+                        CommandAttribute commandAttribute = method.GetCustomAttribute<CommandAttribute>();
+                        if (commandAttribute != null)
+                        {
+                            Commands command = new Commands(commandAttribute.CommandName, commandAttribute.Verbs,
+                                (Action<Game, CommandContext>)Delegate.CreateDelegate(typeof(Action<Game, CommandContext>), method));
+                            CommandsManager.AddCommand(command);
+                        }
+                    }
+                }
+            }
+        }
         
     }
 
